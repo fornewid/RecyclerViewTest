@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val adapter = SectionListAdapter()
+        binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.itemAnimator = null
         binding.recyclerView.adapter = adapter
 

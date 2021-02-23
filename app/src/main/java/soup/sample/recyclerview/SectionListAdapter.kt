@@ -11,9 +11,12 @@ import soup.sample.recyclerview.model.Section
 class SectionListAdapter :
     ListAdapter<Section, SectionViewHolder>(IdBasedDiffCallback { it.title }) {
 
+    private val recycledViewPool = RecyclerView.RecycledViewPool()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SectionViewHolder {
         return SectionViewHolder(
-            ItemSectionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemSectionBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            recycledViewPool
         )
     }
 
@@ -22,12 +25,15 @@ class SectionListAdapter :
     }
 
     class SectionViewHolder(
-        private val binding: ItemSectionBinding
+        private val binding: ItemSectionBinding,
+        recycledViewPool: RecyclerView.RecycledViewPool
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private val adapter = ItemListAdapter()
 
         init {
+            binding.nestedRecyclerView.setRecycledViewPool(recycledViewPool)
+            binding.nestedRecyclerView.setHasFixedSize(true)
             binding.nestedRecyclerView.itemAnimator = null
             binding.nestedRecyclerView.adapter = adapter
         }
