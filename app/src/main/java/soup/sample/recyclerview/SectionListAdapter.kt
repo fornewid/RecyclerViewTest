@@ -1,5 +1,7 @@
 package soup.sample.recyclerview
 
+import android.os.Parcelable
+import android.util.ArrayMap
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -12,6 +14,7 @@ class SectionListAdapter :
     ListAdapter<Section, SectionViewHolder>(IdBasedDiffCallback { it.title }) {
 
     private val recycledViewPool = RecyclerView.RecycledViewPool()
+    private val stateMap = ArrayMap<String, Parcelable>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SectionViewHolder {
         return SectionViewHolder(
@@ -21,7 +24,15 @@ class SectionListAdapter :
     }
 
     override fun onBindViewHolder(holder: SectionViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val item = getItem(position)
+        holder.restoreState(stateMap[item.title])
+        holder.bind(item)
+    }
+
+    override fun onViewRecycled(holder: SectionViewHolder) {
+        val item = getItem(holder.adapterPosition)
+        stateMap[item.title] = holder.saveState()
+        super.onViewRecycled(holder)
     }
 
     class SectionViewHolder(
@@ -41,6 +52,14 @@ class SectionListAdapter :
         fun bind(section: Section) {
             binding.sectionTitle.text = section.title
             adapter.submitList(section.items)
+        }
+
+        fun saveState(): Parcelable? {
+            return binding.nestedRecyclerView.layoutManager?.onSaveInstanceState()
+        }
+
+        fun restoreState(state: Parcelable?) {
+            binding.nestedRecyclerView.layoutManager?.onRestoreInstanceState(state)
         }
     }
 }

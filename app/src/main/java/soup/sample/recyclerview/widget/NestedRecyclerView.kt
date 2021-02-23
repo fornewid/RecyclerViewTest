@@ -1,6 +1,7 @@
 package soup.sample.recyclerview.widget
 
 import android.content.Context
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.recyclerview.widget.RecyclerView
@@ -35,5 +36,13 @@ class NestedRecyclerView @JvmOverloads constructor(
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         removeOnItemTouchListener(itemTouchListener)
+    }
+
+    fun saveInstanceState(): Parcelable? {
+        return super.onSaveInstanceState()
+    }
+
+    fun restoreInstanceState(state: Parcelable) {
+        super.onRestoreInstanceState(state)
     }
 }
